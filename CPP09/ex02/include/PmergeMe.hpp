@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tgoudman <tgoudman@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:02:38 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/06/03 10:39:46 by tgoudman         ###   ########.fr       */
+/*   Updated: 2025/06/10 00:45:29 by nezumickey       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class PmergeMe
 		int 	F(int n);
 	    void	sort_vec(std::vector<int>& vec);
    		void	sort_deque(std::deque<int>& deque);
-		long 	jacobsthal_number(long n);
+		long 	jacobsthalNumber(long n);
 };
 
 
