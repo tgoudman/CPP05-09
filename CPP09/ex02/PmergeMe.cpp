@@ -6,7 +6,7 @@
 /*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:02:45 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/06/10 01:27:27 by nezumickey       ###   ########.fr       */
+/*   Updated: 2025/06/12 22:01:08 by nezumickey       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,13 @@ long PmergeMe::jacobsthalNumber(long n)
 
 void PmergeMe::sort_vec(std::vector<int>& vec) 
 {
-	_insertion_sort<std::vector<int> >(vec, 1); 
+	_insertionSort<std::vector<int> >(vec, 1); 
 }
 
 void PmergeMe::sort_deque(std::deque<int>& deque)
 {
-	_insertion_sort<std::deque<int> >(deque, 1);
+	// _insertionSort<std::deque<int> >(deque, 1);
+	(void)deque;
 }
 
 int PmergeMe::F(int n)
@@ -104,89 +105,85 @@ void 	PmergeMe::_swap_pair(T it, int pair_level)
 }
 
 template <typename T>
-void	PmergeMe::_insertion_sort(T& container, int pairLevel)
+void	PmergeMe::_insertionSort(T& container, int pairLevel)
 {
 	typename T::iterator it;
-	typename T::iterator itLast;
 	typename T::iterator ite;
 	size_t pairNbr;
 	int jump;
-	long unsigned int bound;
 
-	bound = 1;
 	jump = pairLevel * 2;
 	it = container.begin();
 	ite = container.end();
 	pairNbr = container.size() / pairLevel;
 	if(pairNbr < 2)
 		return;
-	
-	while (std::distance(it, ite) >= jump)
+	while (std::distance(it, ite) > jump)
 	{
-		if (bound * 2 > container.size())
-			break;
-		typename T::iterator thisPair = next(it, pairLevel -1);
 		typename T::iterator nextPair = next(it, jump -1);
-		if (compare(nextPair, thisPair))
+		if (compare(nextPair, it))
+			_swap_pair(it, pairLevel);
+		// std::cout << "distance: " << std::distance(it, nextPair) << "\n" << "it begin: " << *it << "\n" << "it last: " << *nextPair << "\n" <<std::endl;
+		// if (*it + jump >= static_cast<int>(container.size()))
+		// 	break;
+		std::advance(it, jump);
+	}
+
+	_insertionSort(container, pairLevel * 2);
+	
+
+	size_t i;
+	i = 0;
+	T leftTable;
+	T rightTable;
+	it = container.begin();
+	ite = container.end();
+	while(std::distance(it, ite) > jump)
+	{
+		if (i >= container.size() / 2 / jump)
 		{
-			std::cout << RED << "swaping pair: " << *thisPair << " " << *nextPair << RESET << std::endl;
-			_swap_pair(thisPair, pairLevel);
+			rightTable.push_back(*it);
+		}
+		else
+		{
+			leftTable.push_back(*it);
 		}
 		std::advance(it, jump);
-		bound *= 2;
+		i++;
 	}
+	std::cout << std::endl;
+	T finalTab;
+	it = container.begin();
+	std::cout << "finalTable: \n";
+	while(std::distance(it, ite) > jump)
+	{
+
+		typename T::iterator nextPair = next(it, jump -1);
+		std::cout << RED << *it << RESET << " ";
+		if (compare(nextPair, it))
+			_swap_pair(it, pairLevel);
+		leftTable.push_back(*it);
+		std::advance(it, jump);
+		i++;
+	}
+	std::cout << std::endl;
 	for(typename T::iterator test = container.begin(); test != container.end(); test++)
 		std::cout << *test << " ";
 	std::cout << std::endl;
-	_insertion_sort(container, pairLevel * 2);
-	T losers;
-	it = container.begin();
-	while (std::distance(it, ite) >= pairLevel)
-	{
-		typename T::iterator loser = next(it, pairLevel - 1);
-		losers.push_back(*loser);
-		std::advance(it, jump);
-	}
+	// std::cout << "Losers: ";
+	// for (typename T::iterator l = losers.begin(); l != losers.end(); ++l)
+	// 	std::cout << *l << " ";
+	// std::cout << std::endl;
+	// // 1. Extraire les "left" (plus petits éléments des paires)
+	// T leftTab;
+	// typename T::iterator itLeft = container.begin();
 
-	std::cout << "Losers: ";
-	for (typename T::iterator l = losers.begin(); l != losers.end(); ++l)
-		std::cout << *l << " ";
-	std::cout << std::endl;
-	// 1. Extraire les "left" (plus petits éléments des paires)
-	T leftTab;
-	typename T::iterator itLeft = container.begin();
+	// while (std::distance(itLeft, container.end()) >= pairLevel * 2) {
+	// 	typename T::iterator leftElement = next(itLeft, pairLevel - 1);
+	// 	leftTab.push_back(*leftElement);
+	// 	std::advance(itLeft, pairLevel * 2);
+	// }
 
-	while (std::distance(itLeft, container.end()) >= pairLevel * 2) {
-		typename T::iterator leftElement = next(itLeft, pairLevel - 1);
-		leftTab.push_back(*leftElement);
-		std::advance(itLeft, pairLevel * 2);
-	}
-
-	// 2. Générer les indices de Jacobsthal
-	std::vector<size_t> jacobIndices;
-	for (size_t j = 1; ; ++j) {
-		long idx = jacobsthalNumber(j);
-		if (static_cast<size_t>(idx) >= leftTab.size())
-			break;
-		jacobIndices.push_back(static_cast<size_t>(idx));
-	}
-
-	// 3. Compléter les indices manquants
-	std::set<size_t> remainingIndices;
-	for (size_t i = 0; i < leftTab.size(); ++i)
-		remainingIndices.insert(i);
-	for (size_t idx : jacobIndices)
-		remainingIndices.erase(idx);
-
-	std::vector<size_t> insertionOrder = jacobIndices;
-	insertionOrder.insert(insertionOrder.end(), remainingIndices.begin(), remainingIndices.end());
-
-	// 4. Insertion binaire dans le container
-	for (size_t idx : insertionOrder) {
-		typename T::value_type value = leftTab[idx];
-		typename T::iterator insertPos = std::upper_bound(container.begin(), container.end(), value);
-		container.insert(insertPos, value);
-}
 
 }
 
