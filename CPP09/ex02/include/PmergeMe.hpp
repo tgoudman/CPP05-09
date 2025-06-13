@@ -6,7 +6,7 @@
 /*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:02:38 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/06/12 18:26:26 by nezumickey       ###   ########.fr       */
+/*   Updated: 2025/06/10 00:45:29 by nezumickey       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 class PmergeMe
 {
 	private:
-		template <typename T>void	_insertionSort(T& container, int pair_level);
+		template <typename T>void	_insertion_sort(T& container, int pair_level);
 		template <typename T>void 	_swap_pair(T it, int pair_level);
 
 	public:

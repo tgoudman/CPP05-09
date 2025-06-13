@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tgoudman <tgoudman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:02:45 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/06/12 22:01:08 by nezumickey       ###   ########.fr       */
+/*   Updated: 2025/06/13 13:38:13 by tgoudman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,12 @@ long PmergeMe::jacobsthalNumber(long n)
 
 void PmergeMe::sort_vec(std::vector<int>& vec) 
 {
-	_insertionSort<std::vector<int> >(vec, 1); 
+	_insertion_sort<std::vector<int> >(vec, 1); 
 }
 
 void PmergeMe::sort_deque(std::deque<int>& deque)
 {
-	// _insertionSort<std::deque<int> >(deque, 1);
-	(void)deque;
+	_insertion_sort<std::deque<int> >(deque, 1);
 }
 
 int PmergeMe::F(int n)
@@ -105,12 +104,13 @@ void 	PmergeMe::_swap_pair(T it, int pair_level)
 }
 
 template <typename T>
-void	PmergeMe::_insertionSort(T& container, int pairLevel)
+void	PmergeMe::_insertion_sort(T& container, int pairLevel)
 {
-	typename T::iterator it;
-	typename T::iterator ite;
-	size_t pairNbr;
-	int jump;
+	typename T::iterator	it;
+	typename T::iterator	itLast;
+	typename T::iterator	ite;
+	long					jump;
+	size_t					pairNbr;
 
 	jump = pairLevel * 2;
 	it = container.begin();
@@ -118,72 +118,131 @@ void	PmergeMe::_insertionSort(T& container, int pairLevel)
 	pairNbr = container.size() / pairLevel;
 	if(pairNbr < 2)
 		return;
-	while (std::distance(it, ite) > jump)
+	if (pairLevel == 3)
+		return;
+	std::cout << "pairLevel :" << pairLevel << std::endl;
+	while (std::distance(it, ite) >= jump)
 	{
 		typename T::iterator nextPair = next(it, jump -1);
 		if (compare(nextPair, it))
+		{
+			std::cout << RED << "swaping pair: " << *it << " " << *nextPair << RESET << std::endl;
 			_swap_pair(it, pairLevel);
-		// std::cout << "distance: " << std::distance(it, nextPair) << "\n" << "it begin: " << *it << "\n" << "it last: " << *nextPair << "\n" <<std::endl;
-		// if (*it + jump >= static_cast<int>(container.size()))
-		// 	break;
+		}
 		std::advance(it, jump);
 	}
-
-	_insertionSort(container, pairLevel * 2);
 	
+	_insertion_sort(container, pairLevel * 2);
 
-	size_t i;
-	i = 0;
-	T leftTable;
-	T rightTable;
-	it = container.begin();
-	ite = container.end();
-	while(std::distance(it, ite) > jump)
-	{
-		if (i >= container.size() / 2 / jump)
-		{
-			rightTable.push_back(*it);
-		}
-		else
-		{
-			leftTable.push_back(*it);
-		}
-		std::advance(it, jump);
-		i++;
-	}
-	std::cout << std::endl;
-	T finalTab;
-	it = container.begin();
-	std::cout << "finalTable: \n";
-	while(std::distance(it, ite) > jump)
-	{
 
-		typename T::iterator nextPair = next(it, jump -1);
-		std::cout << RED << *it << RESET << " ";
-		if (compare(nextPair, it))
-			_swap_pair(it, pairLevel);
-		leftTable.push_back(*it);
-		std::advance(it, jump);
-		i++;
-	}
-	std::cout << std::endl;
+std::cout << CYAN << "Before: " << RESET;
 	for(typename T::iterator test = container.begin(); test != container.end(); test++)
 		std::cout << *test << " ";
-	std::cout << std::endl;
-	// std::cout << "Losers: ";
-	// for (typename T::iterator l = losers.begin(); l != losers.end(); ++l)
-	// 	std::cout << *l << " ";
-	// std::cout << std::endl;
-	// // 1. Extraire les "left" (plus petits éléments des paires)
-	// T leftTab;
-	// typename T::iterator itLeft = container.begin();
+std::cout << std::endl;
+	T leftArray;
+	T rightArray;
+	T finalTab;
+	it = container.begin();
+	unsigned long i = 0;
+	while (it != ite)
+	{
+		if (i > container.size() / pairLevel)
+			break;
+		typename T::iterator nextElem = next(it, pairLevel - 1);
+		if (i >= (container.size() / pairLevel) / 2)
+			rightArray.push_back(*nextElem);
+		else
+			leftArray.push_back(*nextElem);
+		it++;
+		i++;
+	}
 
-	// while (std::distance(itLeft, container.end()) >= pairLevel * 2) {
-	// 	typename T::iterator leftElement = next(itLeft, pairLevel - 1);
-	// 	leftTab.push_back(*leftElement);
-	// 	std::advance(itLeft, pairLevel * 2);
-	// }
+	it = leftArray.begin();
+	ite = leftArray.end();
+	bool inserted = false;
+	i = 2;
+	while (leftArray.size() != 0)
+	{
+		typename T::iterator nextElem = next(leftArray.begin(), (leftArray.size() / i));
+		std::cout << leftArray.size() << std::endl; 
+		if (leftArray.size() == 1 || leftArray.size() == 2)
+		{
+			nextElem = leftArray.begin();
+		}
+		if (finalTab.size() == 0)
+		{
+			finalTab.push_back(*nextElem);
+			leftArray.erase(nextElem);
+			continue;
+		}
+		for (typename T::iterator itFinal = finalTab.begin(); itFinal != finalTab.end(); itFinal++)
+		{
+			inserted = false;
+			if (*nextElem < *itFinal)
+			{
+				finalTab.insert(itFinal, *nextElem);
+				leftArray.erase(nextElem);
+				inserted = true;
+				break;
+			}
+		}
+		if(!inserted)
+		{
+			finalTab.push_back(*nextElem);
+			leftArray.erase(nextElem);			
+		}
+		it++;
+		i++;
+	}
 
+
+	it = rightArray.begin();
+	ite = rightArray.end();
+	inserted = false;
+	i = 2;
+	while (rightArray.size() != 0)
+	{
+		typename T::iterator nextElem = next(rightArray.begin(), (rightArray.size() / i));
+		std::cout << rightArray.size() << std::endl; 
+		if (rightArray.size() == 1 || rightArray.size() == 2)
+		{
+			nextElem = rightArray.begin();
+		}
+		if (finalTab.size() == 0)
+		{
+			finalTab.push_back(*nextElem);
+			rightArray.erase(nextElem);
+			continue;
+		}
+		for (typename T::iterator itFinal = finalTab.begin(); itFinal != finalTab.end(); itFinal++)
+		{
+			inserted = false;
+			if (*nextElem < *itFinal)
+			{
+				finalTab.insert(itFinal, *nextElem);
+				rightArray.erase(nextElem);
+				inserted = true;
+				break;
+			}
+		}
+		if(!inserted)
+		{
+			finalTab.push_back(*nextElem);
+			rightArray.erase(nextElem);			
+		}
+		it++;
+		i++;
+	}
+std::cout << BLUE << "leftTab: " << RESET;
+	for (typename T::iterator l = leftArray.begin(); l != leftArray.end(); ++l)
+		std::cout << *l << " ";
+std::cout << RED << "rightTab: " << RESET;
+	for (typename T::iterator l = rightArray.begin(); l != rightArray.end(); ++l)
+		std::cout << *l << " ";
+std::cout << YELLOW << "finalTab: " << RESET;
+	for (typename T::iterator l = finalTab.begin(); l != finalTab.end(); ++l)
+		std::cout << *l << " ";
+std::cout << std::endl;
 
 }
 
