@@ -6,7 +6,7 @@
 /*   By: tgoudman <tgoudman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 17:17:57 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/06/17 17:41:51 by tgoudman         ###   ########.fr       */
+/*   Updated: 2025/06/17 18:03:14 by tgoudman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void RPN::expEval(std::string exp)
 			i++;
 		if (isDigit(exp[i]))
 		{
-			char tmp[2] = {exp[i], '\0'};
+			char tmp[2] = {exp[i]};
 			this->stack.push(atoi(tmp));
 		}
 		else if (isOperator(exp[i]))

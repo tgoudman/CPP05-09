@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tgoudman <tgoudman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 14:29:15 by raveriss          #+#    #+#             */
-/*   Updated: 2025/06/16 21:07:16 by nezumickey       ###   ########.fr       */
+/*   Updated: 2025/06/17 19:21:29 by tgoudman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,31 @@ std::string intToString(int number)
 	oss << number;
 	return oss.str();
 }
-
+template <typename T>
+T		checkArgument(int argc, char **argv, T container)
+{
+	for (int i = 1; i < argc; ++i)
+	{
+		if (!isPositiveInteger(argv[i]))
+		{
+			std::cerr << RESET << RED << "Error: Invalid input '" << argv[i] << "'. All inputs must be positive integers." << RESET << std::endl << std::endl;
+			exit (1);
+		}
+		long long verifie = std::strtoll(argv[i], NULL, 10);
+		if (verifie > INT_MAX)
+		{
+			std::cerr << RESET << RED << "Error: Input value '" << argv[i] << "' exceeds the maximum allowed integer value (INT_MAX)." << RESET << std::endl;
+			exit (1);
+		}
+		int num = std::atoi(argv[i]);
+		container.push_back(num);
+	}
+	return (container);
+}
 int main(int argc, char* argv[])
 {
-
-	std::vector<int> data;
-	std::deque<int> deq;
-
+	std::vector<int> data = checkArgument(argc, argv, std::vector<int>());
+	std::deque<int> deq = checkArgument(argc, argv, std::deque<int>());
 	for (int i = 1; i < argc; ++i)
 	{
 		if (!isPositiveInteger(argv[i]))
@@ -70,67 +88,50 @@ int main(int argc, char* argv[])
 	pmergeMe.setData(data);
 	pmergeMe.setDeq(deq);
 
-	std::cout << CYAN << "/*                                  VECTOR                                   */\n" << RESET;
 
+	std::cout << CYAN << "/*                                  VECTOR                                   */\n" << RESET;
 	std::cout << CYAN << "Before" << RESET << " : ";
 	for (std::vector<int>::iterator it = pmergeMe.getData().begin(); it != pmergeMe.getData().end(); ++it)
-	{
 		std::cout << *it << " ";
-	}
-
 	if (pmergeMe.getData().size() > 26)
 		std::cout << std::endl;
-
 	std::clock_t startVector = std::clock();
 	sortsFordJohnson(pmergeMe.getData());
 	std::clock_t endVector = std::clock();
 	double durationVector = 1000000.0 * (endVector - startVector) / CLOCKS_PER_SEC;
-
 	std::cout << CYAN << "\nAfter" << RESET << " : ";
 	for (std::vector<int>::iterator it = pmergeMe.getData().begin(); it != pmergeMe.getData().end(); ++it)
-	{
 		std::cout << *it << " ";
-	}
-
 	if (pmergeMe.getData().size() > 26 || pmergeMe.getDeq().size() <= 10)
 		std::cout << std::endl;
+
 
 
 	std::cout << CYAN << "/*                                   DEQUE                                   */\n" << RESET;
 
 	std::cout << CYAN << "Before" << RESET << " : ";
 	for (std::deque<int>::iterator it = pmergeMe.getDeq().begin(); it != pmergeMe.getDeq().end(); ++it)
-	{
 		std::cout << *it << " ";
-	}
-
 	if (pmergeMe.getDeq().size() > 26 || pmergeMe.getDeq().size() > 10)
 		std::cout << std::endl;
-
 	std::clock_t startDeque = std::clock();
 	sortsFordJohnson(pmergeMe.getDeq());
 	std::clock_t endDeque = std::clock();
 	double durationDeque = 1000000.0 * (endDeque - startDeque) / CLOCKS_PER_SEC;
-
 	if (pmergeMe.getDeq().size() > 26 || pmergeMe.getDeq().size() <= 10)
 		std::cout << std::endl;
-
 	std::cout << CYAN << "After" << RESET << " : ";
 	for (std::deque<int>::iterator it = pmergeMe.getDeq().begin(); it != pmergeMe.getDeq().end(); ++it)
-	{
 		std::cout << *it << " ";
-	}
-
 	if (pmergeMe.getDeq().size() > 26 || pmergeMe.getDeq().size() <= 10)
 		std::cout << std::endl;
 
 	std::cout << CYAN << "/*                                  RESULTAT                                 */\n" << RESET;
 
+
 	const char* vectorColor = (durationVector <= durationDeque) ? GREEN : RED;
 	const char* dequeColor = (durationDeque <= durationVector) ? GREEN : RED;
-
 	int maxWidth = std::max(intToString(durationVector).length(), intToString(durationDeque).length());
-
 	std::cout << CYAN << "Time to process a range of " << pmergeMe.getData().size() << " elements with std::\n" << RESET << vectorColor << " vector "
 				<< RESET << ": " << formatWithSpaces(durationVector, maxWidth) << " us" << std::endl;
 	std::cout << dequeColor << "  deque " << RESET << ": " << formatWithSpaces(durationDeque, maxWidth) << " us" << RESET << std::endl << std::endl;
