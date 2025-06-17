@@ -3,172 +3,135 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tgoudman <tgoudman@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/31 18:01:52 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/06/13 08:58:38 by tgoudman         ###   ########.fr       */
+/*   Created: 2024/06/25 14:29:15 by raveriss          #+#    #+#             */
+/*   Updated: 2025/06/16 21:07:16 by nezumickey       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "PmergeMe.hpp"
-#include <cerrno>
-#include <climits>
-#include <cstdlib>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <set>
+#include "include/PmergeMe.hpp"
 
-static std::string validate_arg(std::string arg)
+bool isPositiveInteger(const std::string& str)
 {
-	if (arg[0] == '-')
-		return "Negative numbers are not allowed";
-	errno = 0;
-	long nbr = strtol(arg.c_str(), NULL, 10);
-	if (nbr == 0 && arg != "0")
-		return "Non-number arguments not allowed";
-	if (nbr > INT_MAX || errno == ERANGE)
-		return "Too big arguments are not allowed";
-	return "";
-}
-
-static std::string validate(int argc, char** argv)
-{
-if (argc == 1)
-	return "No arguments were provided";
-for (int i = 1; i < argc; i++)
-{
-	std::string status = validate_arg(argv[i]);
-	if (status != "")
-		return status;
-}
-return "";
-}
-
-static std::vector<int> argv_to_vector(int argc, char** argv)
-{
-	std::vector<int> res;
-	res.reserve(argc - 1);
-	for (int i = 1; i < argc; i++)
+	for (size_t i = 0; i < str.length(); ++i)
 	{
-		res.push_back(atoi(argv[i]));
-	}
-	return res;
-}
-
-// static std::deque<int> argv_to_deque(int argc, char** argv)
-// {
-// 	std::deque<int> res;
-// 	for (int i = 1; i < argc; i++)
-// 	{
-// 		res.push_back(atoi(argv[i]));
-// 	}
-// 	return res;
-// }
-
-static std::set<int> argv_to_set(int argc, char** argv)
-{
-	std::set<int> res;
-	for (int i = 1; i < argc; i++)
-	{
-		res.insert(atoi(argv[i]));
-	}
-	return res;
-}
-
-template <typename T> static bool isSorted(const T& container)
-{
-	if (container.size() == 0 || container.size() == 1)
-		return true;
-	typename T::const_iterator end = container.end();
-	std::advance(end, -1);
-	for (typename T::const_iterator it = container.begin(); it != end; it++)
-	{
-		typename T::const_iterator next = it;
-		std::advance(next, 1);
-		if (*it > *next)
+		if (!isdigit(str[i]))
 			return false;
 	}
-	return true;
-	}
+	return !str.empty();
+}
 
-static std::string argv_to_str(int argc, char** argv)
+std::string formatWithSpaces(int number, int maxWidth)
 {
-	std::string res("");
-	res.reserve(argc + 1);
-	for (int i = 1; argv[i]; i++)
+	std::ostringstream oss;
+	oss << number;
+	std::string str = oss.str();
+	int numSpaces = maxWidth - str.length();
+	for (int i = 0; i < numSpaces; ++i)
 	{
-		res += " ";
-		res += argv[i];
+		str = " " + str;
 	}
-	return res;
+	return str;
 }
 
-static std::string vec_to_str(std::vector<int>& vec)
+std::string intToString(int number)
 {
-    std::stringstream ss;
-    ss << vec[0];
-    for (size_t i = 1; i < vec.size(); i++)
-    {
-        ss << " " << vec[i];
-    }
-    return ss.str();
+	std::ostringstream oss;
+	oss << number;
+	return oss.str();
 }
 
-// static bool retained_original_values(std::set<int>& original_values, std::vector<int>& vec)
-// {
-// 	for (int i = 0; i < (int)vec.size(); i++)
-// 	{
-// 		if (original_values.find(vec[i]) == original_values.end())
-// 			return false;
-// 		original_values.erase(vec[i]);
-// 	}
-// 	return true;
-// }
-
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
-    PmergeMe pm;
-	
-    std::string status = validate(argc, argv);
-    if (status != "")
-    {
-        std::cerr << "Error: " << status << "\n";
-        return EXIT_FAILURE;
-    }
-	std::set<int> original_values = argv_to_set(argc, argv);
 
-    clock_t start_vec = clock();
-    std::vector<int> vec = argv_to_vector(argc, argv);
-    pm.sort_vec(vec);
-    clock_t end_vec = clock();
-    double time_elapsed_vec = static_cast<double>(end_vec - start_vec) / CLOCKS_PER_SEC;
+	std::vector<int> data;
+	std::deque<int> deq;
 
-	// PmergeMe::nbr_compare = 0;
-    // clock_t start_deque = clock();
-    // std::deque<int> deque = argv_to_deque(argc, argv);
-    // pm.sort_deque(deque);
-    // clock_t end_deque = clock();
-    // double time_elapsed_deque = static_cast<double>(end_deque - start_deque) / CLOCKS_PER_SEC;
+	for (int i = 1; i < argc; ++i)
+	{
+		if (!isPositiveInteger(argv[i]))
+		{
+			std::cerr << RESET << RED << "Error: Invalid input '" << argv[i] << "'. All inputs must be positive integers." << RESET << std::endl << std::endl;
+			return 1;
+		}
+		long long verifie = std::strtoll(argv[i], NULL, 10);
+		if (verifie > INT_MAX)
+		{
+			std::cerr << RESET << RED << "Error: Input value '" << argv[i] << "' exceeds the maximum allowed integer value (INT_MAX)." << RESET << std::endl;
+			return 1;
+		}
+		int num = std::atoi(argv[i]);
+		data.push_back(num);
+		deq.push_back(num);
+	}
 
-    // if (!isSorted(vec) || (int)deque.size() != (argc - 1) || !retained_original_values(original_values, vec))
-	// {
-    //     std::cout << "Vector was not sorted properly.\n";
-	// 	return 1;
-	// }
-    // if (!isSorted(deque) || (int)deque.size() != (argc - 1))
-	// {
-    //     std::cout << "Deque was not sorted properly.\n";
-	// 	return 1;
-	// }
+	PmergeMe pmergeMe;
+	pmergeMe.setData(data);
+	pmergeMe.setDeq(deq);
 
-    std::cout << RED << "Before: " << RESET << argv_to_str(argc, argv) << std::endl;
-    std::cout << GREEN << "After:   " << RESET << vec_to_str(vec) << std::endl;
-    std::cout << "Time to process a range of " << vec.size()
-              << " elements with std::vector: " << std::fixed << std::setprecision(6)
-              << time_elapsed_vec << "s\n";
-    // std::cout << "Time to process a range of " << vec.size()
-    //           << " elements with std::deque:  " << std::fixed << std::setprecision(6)
-    //           << time_elapsed_deque << "s\n";
-	// std::cout << "Number of comparisons: " << PmergeMe::nbr_compare << '\n';
+	std::cout << CYAN << "/*                                  VECTOR                                   */\n" << RESET;
+
+	std::cout << CYAN << "Before" << RESET << " : ";
+	for (std::vector<int>::iterator it = pmergeMe.getData().begin(); it != pmergeMe.getData().end(); ++it)
+	{
+		std::cout << *it << " ";
+	}
+
+	if (pmergeMe.getData().size() > 26)
+		std::cout << std::endl;
+
+	std::clock_t startVector = std::clock();
+	sortsFordJohnson(pmergeMe.getData());
+	std::clock_t endVector = std::clock();
+	double durationVector = 1000000.0 * (endVector - startVector) / CLOCKS_PER_SEC;
+
+	std::cout << CYAN << "\nAfter" << RESET << " : ";
+	for (std::vector<int>::iterator it = pmergeMe.getData().begin(); it != pmergeMe.getData().end(); ++it)
+	{
+		std::cout << *it << " ";
+	}
+
+	if (pmergeMe.getData().size() > 26 || pmergeMe.getDeq().size() <= 10)
+		std::cout << std::endl;
+
+
+	std::cout << CYAN << "/*                                   DEQUE                                   */\n" << RESET;
+
+	std::cout << CYAN << "Before" << RESET << " : ";
+	for (std::deque<int>::iterator it = pmergeMe.getDeq().begin(); it != pmergeMe.getDeq().end(); ++it)
+	{
+		std::cout << *it << " ";
+	}
+
+	if (pmergeMe.getDeq().size() > 26 || pmergeMe.getDeq().size() > 10)
+		std::cout << std::endl;
+
+	std::clock_t startDeque = std::clock();
+	sortsFordJohnson(pmergeMe.getDeq());
+	std::clock_t endDeque = std::clock();
+	double durationDeque = 1000000.0 * (endDeque - startDeque) / CLOCKS_PER_SEC;
+
+	if (pmergeMe.getDeq().size() > 26 || pmergeMe.getDeq().size() <= 10)
+		std::cout << std::endl;
+
+	std::cout << CYAN << "After" << RESET << " : ";
+	for (std::deque<int>::iterator it = pmergeMe.getDeq().begin(); it != pmergeMe.getDeq().end(); ++it)
+	{
+		std::cout << *it << " ";
+	}
+
+	if (pmergeMe.getDeq().size() > 26 || pmergeMe.getDeq().size() <= 10)
+		std::cout << std::endl;
+
+	std::cout << CYAN << "/*                                  RESULTAT                                 */\n" << RESET;
+
+	const char* vectorColor = (durationVector <= durationDeque) ? GREEN : RED;
+	const char* dequeColor = (durationDeque <= durationVector) ? GREEN : RED;
+
+	int maxWidth = std::max(intToString(durationVector).length(), intToString(durationDeque).length());
+
+	std::cout << CYAN << "Time to process a range of " << pmergeMe.getData().size() << " elements with std::\n" << RESET << vectorColor << " vector "
+				<< RESET << ": " << formatWithSpaces(durationVector, maxWidth) << " us" << std::endl;
+	std::cout << dequeColor << "  deque " << RESET << ": " << formatWithSpaces(durationDeque, maxWidth) << " us" << RESET << std::endl << std::endl;
 }
