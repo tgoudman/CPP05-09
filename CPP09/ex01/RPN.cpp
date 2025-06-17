@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tgoudman <tgoudman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 17:17:57 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/05/31 17:52:31 by nezumickey       ###   ########.fr       */
+/*   Updated: 2025/06/17 17:41:51 by tgoudman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int RPN::rpnCalculator(int a, int b, char op)
 		if (a == 0)
 		{
 			std::cout << "Error" << std::endl;
+			this->~RPN();
 			exit(EXIT_FAILURE);
 		}
 		return (b/a);
@@ -116,6 +117,7 @@ void RPN::expEval(std::string exp)
 			if (this->stack.size() < 2)
 			{
 				std::cout << "Error" << std::endl;
+				this->~RPN();
 				exit(EXIT_FAILURE);
 			}
 			int a = this->stack.top();
@@ -128,6 +130,7 @@ void RPN::expEval(std::string exp)
 		else
 		{
 			std::cout << "Error" << std::endl;
+			this->~RPN();
 			exit(EXIT_FAILURE);
 		}
 		i++;
@@ -135,6 +138,7 @@ void RPN::expEval(std::string exp)
 	if (this->stack.size() != 1)
 	{
 		std::cout << "Error" << std::endl;
+		this->~RPN();
 		exit(EXIT_FAILURE);
 	}
 	std::cout << this->stack.top() << std::endl;

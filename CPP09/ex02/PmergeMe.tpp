@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.tpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tgoudman <tgoudman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:02:45 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/06/16 21:10:25 by nezumickey       ###   ########.fr       */
+/*   Updated: 2025/06/17 12:52:37 by tgoudman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,13 @@ void merge(typename ContainerType::iterator iterBegin, typename ContainerType::i
 		leftSubArray.insert(insertPosition, *iterRight);
 
 		/* Print the ASCII representation before moving elements */
-		std::cout << "Inserting " << *iterRight << std::endl;
-		std::cout << "container value before insertion: ";
-		printContainer(leftSubArray.begin(), leftSubArray.end());
+		// std::cout << "Inserting " << *iterRight << std::endl;
+		// std::cout << "container value before insertion: ";
+		// printContainer(leftSubArray.begin(), leftSubArray.end());
 
 		/* Print the ASCII representation after moving elements */
-		std::cout << "container value after insertion: ";
-		printContainer(leftSubArray.begin(), leftSubArray.end());
+		// std::cout << "container value after insertion: ";
+		// printContainer(leftSubArray.begin(), leftSubArray.end());
 
 		++iterRight;
 	}
