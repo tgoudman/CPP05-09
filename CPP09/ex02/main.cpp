@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tgoudman <tgoudman@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 14:29:15 by raveriss          #+#    #+#             */
-/*   Updated: 2025/06/18 14:22:58 by tgoudman         ###   ########.fr       */
+/*   Updated: 2025/06/19 09:26:04 by nezumickey       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ T		checkArgument(int argc, char **argv, T container)
 {
 	for (int i = 1; i < argc; ++i)
 	{
-		if (!isPositiveInteger(argv[i]))
+		if (!isPositiveInteger(argv[i]) || argc == 1)
 		{
 			std::cerr << RESET << RED << "Error: Invalid input '" << argv[i] << "'. All inputs must be positive integers." << RESET << std::endl << std::endl;
 			exit (1);
@@ -51,6 +51,10 @@ T		checkArgument(int argc, char **argv, T container)
 }
 int main(int argc, char* argv[])
 {
+	if (argc == 1)
+		return (std::cerr << RESET << RED << "Error: no Input value." << std::endl, 1);
+	if (DEBUG)
+		std::cout << "Debugging activate." << std::endl;
 	std::vector<int> data = checkArgument(argc, argv, std::vector<int>());
 	std::deque<int> deq = checkArgument(argc, argv, std::deque<int>());
 

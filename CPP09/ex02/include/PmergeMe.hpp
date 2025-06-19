@@ -6,7 +6,7 @@
 /*   By: nezumickey <nezumickey@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 18:02:38 by nezumickey        #+#    #+#             */
-/*   Updated: 2025/06/16 21:05:53 by nezumickey       ###   ########.fr       */
+/*   Updated: 2025/06/19 09:35:07 by nezumickey       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,14 @@
 # include <iomanip>
 # include <cmath>
 # include <algorithm>
-#include <climits>
-#include <sstream>
-#include <ctime>
+# include <climits>
+# include <sstream>
+# include <ctime>
 # include "color.hpp"
+
+#ifndef DEBUG
+# define DEBUG 0
+#endif
 
 class PmergeMe
 {
