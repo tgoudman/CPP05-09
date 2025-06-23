@@ -26,21 +26,19 @@ void printContainer(Iterator begin, Iterator end)
 template <typename Iterator, typename T>
 Iterator binarySearch(Iterator begin, Iterator end, const T& value)
 {
-	Iterator left = begin;
-	Iterator right = end;
-	while (left < right)
+	while (begin < end)
 	{
-		Iterator mid = left + (right - left) / 2;
+		Iterator mid = begin + (end - begin) / 2;
 		if (DEBUG)
 			std::cout << "Comparing " << value << " with " << *mid << std::endl;
 		if (*mid == value)
 			return mid;
 		else if (*mid < value)
-			left = mid + 1;
+			begin = mid + 1;
 		else
-			right = mid;
+			end = mid;
 	}
-	return left;
+	return begin;
 }
 
 template <typename ContainerType>
@@ -55,15 +53,20 @@ void merge(typename ContainerType::iterator it, typename ContainerType::iterator
 
 	while (iterRight != rightSubArray.end())
 	{
-		typename std::vector<ValueType>::iterator insertPosition = binarySearch(leftSubArray.begin(), leftSubArray.end(), *iterRight);
-		leftSubArray.insert(insertPosition, *iterRight);
 		if (DEBUG)
 		{
 			std::cout << "Inserting " << *iterRight << std::endl;
 			std::cout << "container value before insertion: ";
 			printContainer(leftSubArray.begin(), leftSubArray.end());
+			typename std::vector<ValueType>::iterator insertPosition = binarySearch(leftSubArray.begin(), leftSubArray.end(), *iterRight);
+			leftSubArray.insert(insertPosition, *iterRight);
 			std::cout << "container value after insertion: ";
 			printContainer(leftSubArray.begin(), leftSubArray.end());
+		}
+		else
+		{
+			typename std::vector<ValueType>::iterator insertPosition = binarySearch(leftSubArray.begin(), leftSubArray.end(), *iterRight);
+			leftSubArray.insert(insertPosition, *iterRight);
 		}
 		++iterRight;
 	}
@@ -88,7 +91,7 @@ void insertionSort(typename Container::iterator begin, typename Container::itera
 
 		if (DEBUG)
 		{
-			std::cout << "Inserting " << currentValue << std::endl;
+			std::cout << "Inserting-------- " << currentValue << std::endl;
 			std::cout << "container value before insertion: ";
 			printContainer(begin, end + 1);
 		}
