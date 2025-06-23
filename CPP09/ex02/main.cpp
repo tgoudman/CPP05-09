@@ -65,21 +65,22 @@ int main(int argc, char* argv[])
 	std::cout << CYAN << "Before" << RESET << " : ";
 	for (std::vector<int>::iterator it = pmergeMe.getData().begin(); it != pmergeMe.getData().end(); ++it)
 		std::cout << *it << " ";
-	if (pmergeMe.getData().size() > 26)
-		std::cout << std::endl;
+
 	std::clock_t startVector = std::clock();
 	sortsFordJohnson(pmergeMe.getData());
 	std::clock_t endVector = std::clock();
+
 	double durationVector = static_cast<double>(endVector - startVector) / CLOCKS_PER_SEC * 1000;
 	std::cout << CYAN << "\nAfter" << RESET << " : ";
 	for (std::vector<int>::iterator it = pmergeMe.getData().begin(); it != pmergeMe.getData().end(); ++it)
 		std::cout << *it << " ";
+
 	std::clock_t startDeque = std::clock();
 	sortsFordJohnson(pmergeMe.getDeq());
 	std::clock_t endDeque = std::clock();
+
 	double durationDeque = static_cast<double>(endDeque - startDeque) / CLOCKS_PER_SEC * 1000;
-	if (pmergeMe.getDeq().size() > 26 || pmergeMe.getDeq().size() <= 10)
-		std::cout << std::endl;
+	std::cout << std::endl;
 
 	const char* vectorColor = (durationVector <= durationDeque) ? GREEN : RED;
 	const char* dequeColor = (durationDeque <= durationVector) ? GREEN : RED;

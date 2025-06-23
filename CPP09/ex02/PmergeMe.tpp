@@ -15,22 +15,12 @@
 #include <deque>
 #include <iterator>
 
-template <typename Iterator>
-void printContainer(Iterator begin, Iterator end)
-{
-	for (Iterator it = begin; it != end; ++it)
-		std::cout << *it << " ";
-	std::cout << std::endl;
-}
-
 template <typename Iterator, typename T>
 Iterator binarySearch(Iterator begin, Iterator end, const T& value)
 {
 	while (begin < end)
 	{
 		Iterator mid = begin + (end - begin) / 2;
-		if (DEBUG)
-			std::cout << "Comparing " << value << " with " << *mid << std::endl;
 		if (*mid == value)
 			return mid;
 		else if (*mid < value)
@@ -50,24 +40,10 @@ void merge(typename ContainerType::iterator it, typename ContainerType::iterator
 	std::vector<ValueType> rightSubArray(itMidle + 1, ite + 1);
 
 	typename std::vector<ValueType>::iterator iterRight = rightSubArray.begin();
-
 	while (iterRight != rightSubArray.end())
 	{
-		if (DEBUG)
-		{
-			std::cout << "Inserting " << *iterRight << std::endl;
-			std::cout << "container value before insertion: ";
-			printContainer(leftSubArray.begin(), leftSubArray.end());
-			typename std::vector<ValueType>::iterator insertPosition = binarySearch(leftSubArray.begin(), leftSubArray.end(), *iterRight);
-			leftSubArray.insert(insertPosition, *iterRight);
-			std::cout << "container value after insertion: ";
-			printContainer(leftSubArray.begin(), leftSubArray.end());
-		}
-		else
-		{
-			typename std::vector<ValueType>::iterator insertPosition = binarySearch(leftSubArray.begin(), leftSubArray.end(), *iterRight);
-			leftSubArray.insert(insertPosition, *iterRight);
-		}
+		typename std::vector<ValueType>::iterator insertPosition = binarySearch(leftSubArray.begin(), leftSubArray.end(), *iterRight);
+		leftSubArray.insert(insertPosition, *iterRight);
 		++iterRight;
 	}
 
@@ -80,46 +56,23 @@ void merge(typename ContainerType::iterator it, typename ContainerType::iterator
 }
 
 template <typename Container>
-void insertionSort(typename Container::iterator begin, typename Container::iterator end)
+void switchElement(typename Container::iterator begin, typename Container::iterator end)
 {
-	typename Container::iterator current;
-
-	for (current = begin + 1; current <= end; ++current)
-	{
-		typename Container::value_type currentValue = *current;
-		typename Container::iterator insertionPoint = binarySearch(begin, current, currentValue);
-
-		if (DEBUG)
-		{
-			std::cout << "Inserting-------- " << currentValue << std::endl;
-			std::cout << "container value before insertion: ";
-			printContainer(begin, end + 1);
-		}
-		for (typename Container::iterator it = current; it > insertionPoint; --it)
-			*it = *(it - 1);
-		*insertionPoint = currentValue;
-		if (DEBUG)
-		{
-			std::cout << "container value after insertion: ";
-			printContainer(begin, end + 1);
-		}
-	}
+	if (*begin < *end)
+		return;
+	typename Container::iterator swap = begin;
+	*begin = *end;
+	*end = *swap;
 }
 
 template <typename T>
 void mergeInsertSortHelper(T& container, typename T::iterator left, typename T::iterator right)
 {
 	if (std::distance(left, right) <= 1)
-		insertionSort<T>(left, right);
+		switchElement<T>(left, right);
 	else
 	{
 		typename T::iterator mid = left + std::distance(left, right) / 2;
-		if (DEBUG)
-		{
-			std::cout << "\nBefore merging: ";
-			printContainer(left, mid);
-			printContainer(mid + 1, right);
-		}
 		mergeInsertSortHelper(container, left, mid);
 		mergeInsertSortHelper(container, mid + 1, right);
 		merge<T>(left, mid, right);

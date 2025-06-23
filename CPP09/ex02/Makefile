@@ -24,5 +24,4 @@ fclean: clean
 
 re: fclean all
 
-debug:
-	$(MAKE) re DEFINES="-DDEBUG=1"
+
